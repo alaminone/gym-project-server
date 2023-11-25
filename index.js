@@ -3,7 +3,7 @@ const app = express();
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const stripe = require("stripe")
+
 
 // console.log('0909090', process.env.DB_SECRET_KEY)
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
@@ -32,6 +32,7 @@ async function run() {
 
   
     const usersCollection = client.db("gymproject").collection("users");
+    const classCollection = client.db("gymproject").collection("class");
    
 
     // mideallwaaere
@@ -130,6 +131,12 @@ async function run() {
       const query = { _id: new ObjectId(id) };
 
       const result = await usersCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // classes
+    app.get("/class",  async (req, res) => {
+      const result = await classCollection.find().toArray();
       res.send(result);
     });
 
