@@ -33,6 +33,9 @@ async function run() {
   
     const usersCollection = client.db("gymproject").collection("users");
     const classCollection = client.db("gymproject").collection("class");
+    const successstoryCollection = client.db("gymproject").collection("successstory");
+    const subscriberCollection = client.db("gymproject").collection("subscriber");
+    const trainersCollection = client.db("gymproject").collection("trainers");
    
 
     // mideallwaaere
@@ -140,7 +143,41 @@ async function run() {
       res.send(result);
     });
 
+
+    // successstory
+
+     app.get("/successstory",  async (req, res) => {
+      const result = await successstoryCollection.find().toArray();
+      res.send(result);
+    });
+
+    // trainer
+
+    app.get("/trainers",  async (req, res) => {
+      const result = await trainersCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.get("/users/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const query = { _id: new ObjectId(id) };
+
+      const result = await trainersCollection.deleteOne(query);
+      res.send(result);
+    });
+
+
+    // subscribe             
    
+
+    app.post('/subscriber',async(req,res)=>{
+      const query = req.body;
+      const result = await subscriberCollection.insertOne(query);
+      res.send(result)
+    })
+
+
     // payment system
 
     // app.post("/create-payment-intent", async (req, res) => {
