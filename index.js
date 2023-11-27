@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken")
 require("dotenv").config();
 
 
@@ -43,12 +43,12 @@ async function run() {
     const verifyToken = (req, res, next) => {
       console.log("inside token", req.headers.authorization);
       if (!req.headers.authorization) {
-        return res.status(401).send({ message: "forbeden access" });
+        return res.status(401).send({ message: "Unauthorized" });
       }
       const token = req.headers.authorization.split(" ")[1];
       jwt.verify(token, process.env.JWT_TOKEN, (err, decoded) => {
         if (err) {
-          return res.status(401).send({ message: "forbidden access" });
+          return res.status(401).send({ message: "Unauthorized"});
         }
 
         req.decoded = decoded;
@@ -73,7 +73,7 @@ async function run() {
 
     app.post("/jwt", async (req, res) => {
       const user = req.body;
-      const token = jwt.sign(user, process.env.JWT_TOKEN, {
+      const token = jwt.sign(user, process.env.DB_JWT_TOKEN, {
         expiresIn: "1h",
       });
       res.send({ token });
@@ -105,9 +105,6 @@ async function run() {
 
     app.get("/users/admin/:email", async (req, res) => {
       const email = req.params.email;
-      // if(email !== req.decoded.email){
-      //   return res.status(403).send({message: "unauthorizede access"})
-      // }
       const query = { email: email };
       const user = await usersCollection.findOne(query);
       let admin = false;
@@ -158,17 +155,25 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/users/:id", async (req, res) => {
+
+
+    app.get("/trainers/:id", async (req, res) => {
       const id = req.params.id;
+      
 
       const query = { _id: new ObjectId(id) };
-
-      const result = await trainersCollection.deleteOne(query);
+    
+      const result = await trainersCollection.findOne(query);
       res.send(result);
     });
 
 
-    // subscribe             
+    // subscribe  
+    
+    app.get("/subscriber",  async (req, res) => {
+      const result = await subscriberCollection.find().toArray();
+      res.send(result);
+    });
    
 
     app.post('/subscriber',async(req,res)=>{
