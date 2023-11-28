@@ -38,12 +38,14 @@ async function run() {
       .db("gymproject")
       .collection("subscriber");
     const trainersCollection = client.db("gymproject").collection("trainers");
-    const weeklyschduleCollection = client.db("gymproject").collection("weeklyschdule");
+    const weeklyschduleCollection = client
+      .db("gymproject")
+      .collection("weeklyschdule");
 
     // mideallwaaere
 
     const verifyToken = (req, res, next) => {
-      console.log("inside token", req.headers.authorization);
+      // console.log("inside token", req.headers.authorization);
       if (!req.headers.authorization) {
         return res.status(401).send({ message: "forbeden access" });
       }
@@ -60,10 +62,10 @@ async function run() {
 
     const verifyAdmin = async (req, res, next) => {
       const email = req.decoded.email;
-      console.log("01888", email);
+
       const query = { email: email };
       const users = await usersCollection.findOne(query);
-      console.log("55", users);
+     
       const isAdmin = users?.role === "admin";
       if (!isAdmin) {
         return res.status(403).send({ message: "forbidden accesss" });
@@ -83,10 +85,11 @@ async function run() {
 
     // user info
     // verifyToken,
-    app.get("/users", verifyToken, verifyAdmin, async (req, res) => {
+    app.get("/users",verifyToken,verifyAdmin, async (req, res) => {
       const result = await usersCollection.find().toArray();
       res.send(result);
     });
+  
 
     app.patch(
       "/users/admin/:id",
@@ -123,6 +126,29 @@ async function run() {
       }
     );
 
+    // handel trainerapplication
+
+    app.put("/users/become/:email", async (req, res) => {
+      const id = req.params.email;
+
+      console.log('tt' , id)
+
+     const filter = { email: id};
+      const updateDoc = {
+        $set: {
+          role: "trainer",
+        },
+      };
+
+      const result = await usersCollection.updateOne(filter, updateDoc);
+
+      if (result.modifiedCount === 1) {
+        res.status(200).json({ message: "User profile updated successfully" });
+      } else {
+        res.status(404).json({ error: "User not found" });
+      }
+    });
+    
     // member
 
     app.patch(
@@ -165,7 +191,54 @@ async function run() {
       res.send(result);
     });
 
-    app.delete("/users/:id", async (req, res) => {
+
+
+    app.post("/users/become/:email", async (req, res) => {
+      const id = req.params.email;
+
+     
+
+      const filter = { email: id};
+
+      const {
+        application,
+        name,
+        email,
+      Image,
+        age,
+    
+        skills,
+        availableTimeWeek,
+        timeSlots,
+        duration,
+        Experience
+      } = req.body;
+
+      const updateDoc = {
+        $set: {
+          application,
+          name,
+          email,
+        Image,
+          age,
+          duration,
+          skills,
+          availableTimeWeek,
+          timeSlots,
+          Experience
+        },
+      };
+
+      const result = await usersCollection.updateOne(filter, updateDoc);
+
+      if (result.modifiedCount === 1) {
+        res.status(200).json({ message: "User profile updated successfully" });
+      } else {
+        res.status(404).json({ error: "User not found" });
+      }
+    });
+    
+    app.delete("/users/:id",verifyToken,verifyAdmin, async (req, res) => {
       const id = req.params.id;
 
       const query = { _id: new ObjectId(id) };
@@ -179,6 +252,7 @@ async function run() {
       const result = await classCollection.find().toArray();
       res.send(result);
     });
+  
 
     // successstory
 
@@ -190,7 +264,7 @@ async function run() {
     // trainer
 
     app.get("/trainers", async (req, res) => {
-      const result = await trainersCollection.find().toArray();
+      const result = await usersCollection.find().toArray();
       res.send(result);
     });
 
@@ -199,7 +273,7 @@ async function run() {
 
       const query = { _id: new ObjectId(id) };
 
-      const result = await trainersCollection.findOne(query);
+      const result = await usersCollection.findOne(query);
       res.send(result);
     });
 
@@ -215,7 +289,6 @@ async function run() {
       const result = await subscriberCollection.insertOne(query);
       res.send(result);
     });
-
 
     // rutin
 
