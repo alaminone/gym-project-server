@@ -31,7 +31,7 @@ async function run() {
 
     const usersCollection = client.db("gymproject").collection("users");
     const classCollection = client.db("gymproject").collection("class");
-    const galleryCollection = client.db("gymproject").collection("infinity");
+    // const galleryCollection = client.db("gymproject").collection("infinity");
     const successstoryCollection = client.db("gymproject").collection("successstory");
     const subscriberCollection = client.db("gymproject").collection("subscriber");
 
@@ -288,21 +288,7 @@ async function run() {
 
     // Gallery
 
-    // app.get("/gallery", async (req, res) => {
-    //   const limit = parseInt(req.query.limit) || 10;
-    //   const offset = parseInt(req.query.offset) || 0;
-
-    //   const result = await galleryCollection
-    //   .find()
-    //   .skip(offset)
-    //   .limit(limit)
-    //   .toArray();
-
-    // res.send({
-    //   result,
-
-    // });
-    // });
+   
 
     // app.get('/gallery', async (req, res) => {
     //   try {
@@ -320,10 +306,7 @@ async function run() {
 
     // r=end
 
-    // await client.db("admin").command({ ping: 1 });
-    // console.log(
-    //   "Pinged your deployment. You successfully connected to MongoDB!"
-    // );
+   
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
