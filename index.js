@@ -31,16 +31,11 @@ async function run() {
 
     const usersCollection = client.db("gymproject").collection("users");
     const classCollection = client.db("gymproject").collection("class");
-    const successstoryCollection = client
-      .db("gymproject")
-      .collection("successstory");
-    const subscriberCollection = client
-      .db("gymproject")
-      .collection("subscriber");
-    const trainersCollection = client.db("gymproject").collection("trainers");
-    const weeklyschduleCollection = client
-      .db("gymproject")
-      .collection("weeklyschdule");
+    const galleryCollection = client.db("gymproject").collection("infinity");
+    const successstoryCollection = client.db("gymproject").collection("successstory");
+    const subscriberCollection = client.db("gymproject").collection("subscriber");
+
+    const weeklyschduleCollection = client.db("gymproject").collection("weeklyschdule");
 
     // mideallwaaere
 
@@ -65,7 +60,7 @@ async function run() {
 
       const query = { email: email };
       const users = await usersCollection.findOne(query);
-     
+
       const isAdmin = users?.role === "admin";
       if (!isAdmin) {
         return res.status(403).send({ message: "forbidden accesss" });
@@ -85,11 +80,10 @@ async function run() {
 
     // user info
     // verifyToken,
-    app.get("/users",verifyToken,verifyAdmin, async (req, res) => {
+    app.get("/users", verifyToken, verifyAdmin, async (req, res) => {
       const result = await usersCollection.find().toArray();
       res.send(result);
     });
-  
 
     app.patch(
       "/users/admin/:id",
@@ -131,9 +125,9 @@ async function run() {
     app.put("/users/become/:email", async (req, res) => {
       const id = req.params.email;
 
-      console.log('tt' , id)
+      console.log("tt", id);
 
-     const filter = { email: id};
+      const filter = { email: id };
       const updateDoc = {
         $set: {
           role: "trainer",
@@ -148,7 +142,7 @@ async function run() {
         res.status(404).json({ error: "User not found" });
       }
     });
-    
+
     // member
 
     app.patch(
@@ -191,27 +185,23 @@ async function run() {
       res.send(result);
     });
 
-
-
     app.post("/users/become/:email", async (req, res) => {
       const id = req.params.email;
 
-     
-
-      const filter = { email: id};
+      const filter = { email: id };
 
       const {
         application,
         name,
         email,
-      Image,
+        Image,
         age,
-    
+
         skills,
         availableTimeWeek,
         timeSlots,
         duration,
-        Experience
+        Experience,
       } = req.body;
 
       const updateDoc = {
@@ -219,13 +209,13 @@ async function run() {
           application,
           name,
           email,
-        Image,
+          Image,
           age,
           duration,
           skills,
           availableTimeWeek,
           timeSlots,
-          Experience
+          Experience,
         },
       };
 
@@ -237,8 +227,8 @@ async function run() {
         res.status(404).json({ error: "User not found" });
       }
     });
-    
-    app.delete("/users/:id",verifyToken,verifyAdmin, async (req, res) => {
+
+    app.delete("/users/:id", verifyToken, verifyAdmin, async (req, res) => {
       const id = req.params.id;
 
       const query = { _id: new ObjectId(id) };
@@ -252,7 +242,6 @@ async function run() {
       const result = await classCollection.find().toArray();
       res.send(result);
     });
-  
 
     // successstory
 
@@ -296,6 +285,38 @@ async function run() {
       const result = await weeklyschduleCollection.find().toArray();
       res.send(result);
     });
+
+    // Gallery
+
+    // app.get("/gallery", async (req, res) => {
+    //   const limit = parseInt(req.query.limit) || 10;
+    //   const offset = parseInt(req.query.offset) || 0;
+
+    //   const result = await galleryCollection
+    //   .find()
+    //   .skip(offset)
+    //   .limit(limit)
+    //   .toArray();
+
+    // res.send({
+    //   result,
+
+    // });
+    // });
+
+    // app.get('/gallery', async (req, res) => {
+    //   try {
+    //     const limit = parseInt(req.query.limit) || 10;
+    //     const offset = parseInt(req.query.offset) || 0;
+
+    //     const result = await galleryCollection.findOne().skip(offset).limit(limit);
+
+    //     res.json(result);
+    //   } catch (error) {
+    //     console.error(error);
+    //     res.status(500).send('Internal Server Error');
+    //   }
+    // });
 
     // r=end
 
